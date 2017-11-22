@@ -2,3 +2,9 @@
 build/
 tmp/*
 log/*
+ingredient_phrase_tagger.egg-info/*
+*.egg
+.idea/*
+*.iml
+input.txt
+result.txt
