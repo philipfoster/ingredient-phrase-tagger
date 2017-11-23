@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import sys
 
-
 if len(sys.argv) < 2:
     sys.stderr.write('Usage: evaluate.py FILENAME')
     sys.exit(1)
@@ -9,8 +8,8 @@ if len(sys.argv) < 2:
 filename = sys.argv[1]
 
 # load CRF++ output for test data
-with open(filename, 'r') as file:
-    sentences = file.read().split('\n\n')
+with open(filename, 'r') as test_file:
+    sentences = test_file.read().split('\n\n')
 
 total_sentences = len(sentences)
 total_words, correct_words, correct_sentences = 0, 0, 0
@@ -33,12 +32,12 @@ for sentence in sentences:
             # we do not count commas
             if word.strip() not in [',']:
 
-                #increment global word count
+                # increment global word count
                 total_words += 1
                 total_words_per_sentence += 1
 
                 if (guess == gold) or (guess[2:] == gold[2:]):
-                    correct_words +=1
+                    correct_words += 1
                     correct_words_per_sentence += 1
 
     if total_words_per_sentence == correct_words_per_sentence:

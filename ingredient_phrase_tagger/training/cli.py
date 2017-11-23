@@ -6,6 +6,7 @@ import pandas as pd
 import utils
 
 
+# noinspection PyMethodMayBeStatic
 class Cli(object):
     def __init__(self, argv):
         self.opts = self._parse_args(argv)
@@ -30,15 +31,15 @@ class Cli(object):
         for index, row in df_slice.iterrows():
             try:
                 # extract the display name
-                display_input = utils.cleanUnicodeFractions(row["input"])
+                display_input = utils.clean_unicode_fractions(row["input"])
                 tokens = utils.tokenize(display_input)
-                del(row["input"])
+                del (row["input"])
 
-                rowData = self.addPrefixes([(t, self.matchUp(t, row)) for t in tokens])
+                row_data = self.add_prefixes([(t, self.match_up(t, row)) for t in tokens])
 
-                for i, (token, tags) in enumerate(rowData):
-                    features = utils.getFeatures(token, i+1, tokens)
-                    print utils.joinLine([token] + features + [self.bestTag(tags)])
+                for i, (token, tags) in enumerate(row_data):
+                    features = utils.get_features(token, i + 1, tokens)
+                    print utils.join_line([token] + features + [self.best_tag(tags)])
 
             # ToDo: deal with this
             except UnicodeDecodeError:
@@ -46,7 +47,7 @@ class Cli(object):
 
             print
 
-    def parseNumbers(self, s):
+    def parse_numbers(self, s):
         """
         Parses a string that represents a number into a decimal data type so that
         we can match the quantity field in the db with the quantity that appears
@@ -61,17 +62,16 @@ class Cli(object):
         m1 = re.match(r'(\d+)\s+(\d)/(\d)', ss)
         if m1 is not None:
             num = int(m1.group(1)) + (float(m1.group(2)) / float(m1.group(3)))
-            return decimal.Decimal(str(round(num,2)))
+            return decimal.Decimal(str(round(num, 2)))
 
         m2 = re.match(r'^(\d)/(\d)$', ss)
         if m2 is not None:
             num = float(m2.group(1)) / float(m2.group(2))
-            return decimal.Decimal(str(round(num,2)))
+            return decimal.Decimal(str(round(num, 2)))
 
         return None
 
-
-    def matchUp(self, token, ingredientRow):
+    def match_up(self, token, ingredientRow):
         """
         Returns our best guess of the match between the tags and the
         words from the display text.
@@ -88,27 +88,26 @@ class Cli(object):
 
         # strip parens from the token, since they often appear in the
         # display_name, but are removed from the comment.
-        token = utils.normalizeToken(token)
-        decimalToken = self.parseNumbers(token)
+        token = utils.normalize_token(token)
+        decimal_token = self.parse_numbers(token)
 
         for key, val in ingredientRow.iteritems():
             if isinstance(val, basestring):
 
                 for n, vt in enumerate(utils.tokenize(val)):
-                    if utils.normalizeToken(vt) == token:
+                    if utils.normalize_token(vt) == token:
                         ret.append(key.upper())
 
-            elif decimalToken is not None:
+            elif decimal_token is not None:
                 try:
-                    if val == decimalToken:
+                    if val == decimal_token:
                         ret.append(key.upper())
                 except:
                     pass
 
         return ret
 
-
-    def addPrefixes(self, data):
+    def add_prefixes(self, data):
         """
         We use BIO tagging/chunking to differentiate between tags
         at the start of a tag sequence and those in the middle. This
@@ -116,24 +115,23 @@ class Cli(object):
 
         Reference: http://www.kdd.cis.ksu.edu/Courses/Spring-2013/CIS798/Handouts/04-ramshaw95text.pdf
         """
-        prevTags = None
-        newData = []
+        prev_tags = None
+        new_data = []
 
         for n, (token, tags) in enumerate(data):
 
             newTags = []
 
             for t in tags:
-                p = "B" if ((prevTags is None) or (t not in prevTags)) else "I"
+                p = "B" if ((prev_tags is None) or (t not in prev_tags)) else "I"
                 newTags.append("%s-%s" % (p, t))
 
-            newData.append((token, newTags))
-            prevTags = tags
+            new_data.append((token, newTags))
+            prev_tags = tags
 
-        return newData
+        return new_data
 
-
-    def bestTag(self, tags):
+    def best_tag(self, tags):
 
         if len(tags) == 1:
             return tags[0]

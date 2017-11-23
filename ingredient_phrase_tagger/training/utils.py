@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import re
-import string
 
 # added on 06/07/2017
 from nltk.stem.snowball import SnowballStemmer
@@ -23,12 +22,14 @@ def tokenize(s):
         s = s.replace(unit + '/', unit + ' ')
         s = s.replace(unit + 's/', unit + 's ')
 
-    return filter(None, re.split(r'([,\(\)])?\s*', clumpFractions(s)))
+    return filter(None, re.split(r'([,\(\)])?\s*', clump_fractions(s)))
 
-def joinLine(columns):
+
+def join_line(columns):
     return "\t".join(columns)
 
-def clumpFractions(s):
+
+def clump_fractions(s):
     """
     Replaces the whitespace between the integer and fractional part of a quantity
     with a dollar sign, so it's interpreted as a single token. The rest of the
@@ -39,7 +40,8 @@ def clumpFractions(s):
     """
     return re.sub(r'(\d+)\s+(\d)/(\d)', r'\1$\2/\3', s)
 
-def cleanUnicodeFractions(s):
+
+def clean_unicode_fractions(s):
     """
     Replace unicode fractions with ascii representation, preceded by a
     space.
@@ -70,13 +72,15 @@ def cleanUnicodeFractions(s):
 
     return s
 
+
 def unclump(s):
     """
     Replacess $'s with spaces. The reverse of clumpFractions.
     """
     return re.sub(r'\$', " ", s)
 
-def normalizeToken(s):
+
+def normalize_token(s):
     """
     ToDo: FIX THIS. We used to use the pattern.en package to singularize words, but
     in the name of simple deployments, we took it out. We should fix this at some
@@ -84,7 +88,8 @@ def normalizeToken(s):
     """
     return singularize(s)
 
-def getFeatures(token, index, tokens):
+
+def get_features(token, index, tokens):
     """
     Returns a list of features for a given token.
     """
@@ -92,10 +97,11 @@ def getFeatures(token, index, tokens):
 
     return [
         ("I%s" % index),
-        ("L%s" % lengthGroup(length)),
-        ("Yes" if isCapitalized(token) else "No") + "CAP",
-        ("Yes" if insideParenthesis(token, tokens) else "No") + "PAREN"
+        ("L%s" % length_group(length)),
+        ("Yes" if is_capitalized(token) else "No") + "CAP",
+        ("Yes" if inside_parenthesis(token, tokens) else "No") + "PAREN"
     ]
+
 
 def singularize(word):
     """
@@ -105,23 +111,26 @@ def singularize(word):
     stemmer = SnowballStemmer("english")
     return stemmer.stem(word)
 
-def isCapitalized(token):
+
+def is_capitalized(token):
     """
     Returns true if a given token starts with a capital letter.
     """
     return re.match(r'^[A-Z]', token) is not None
 
-def lengthGroup(actualLength):
+
+def length_group(actual_length):
     """
     Buckets the length of the ingredient into 6 buckets.
     """
     for n in [4, 8, 12, 16, 20]:
-        if actualLength < n:
+        if actual_length < n:
             return str(n)
 
     return "X"
 
-def insideParenthesis(token, tokens):
+
+def inside_parenthesis(token, tokens):
     """
     Returns true if the word is inside parenthesis in the phrase.
     """
@@ -129,9 +138,10 @@ def insideParenthesis(token, tokens):
         return True
     else:
         line = " ".join(tokens)
-        return re.match(r'.*\(.*'+re.escape(token)+'.*\).*',  line) is not None
+        return re.match(r'.*\(.*' + re.escape(token) + '.*\).*', line) is not None
 
-def displayIngredient(ingredient):
+
+def display_ingredient(ingredient):
     """
     Format a list of (tag, [tokens]) tuples as an HTML string for display.
 
@@ -144,8 +154,9 @@ def displayIngredient(ingredient):
         for tag, tokens in ingredient
     ])
 
+
 # updated on 06/07/2017
-def smartJoin(words):
+def smart_join(words):
     """
     Joins list of words with spaces, but is smart about not adding spaces
     before commas.
@@ -254,17 +265,17 @@ def import_data(lines):
 
     # reassemble the output into a list of dicts.
     output = [
-        dict([(k, smartJoin(tokens)) for k, tokens in ingredient.iteritems()])
+        dict([(k, smart_join(tokens)) for k, tokens in ingredient.iteritems()])
         for ingredient in data
         if len(ingredient)
-        ]
+    ]
     # Add the marked-up display data
     for i, v in enumerate(output):
-        output[i]["display"] = displayIngredient(display[i])
+        output[i]["display"] = display_ingredient(display[i])
 
     # Add the raw ingredient phrase
     for i, v in enumerate(output):
-        output[i]["input"] = smartJoin(
+        output[i]["input"] = smart_join(
             [" ".join(tokens) for k, tokens in display[i]])
 
     return output
@@ -278,7 +289,7 @@ def export_data(lines):
         tokens = tokenize(line_clean)
 
         for i, token in enumerate(tokens):
-            features = getFeatures(token, i+1, tokens)
-            output.append(joinLine([token] + features))
+            features = get_features(token, i + 1, tokens)
+            output.append(join_line([token] + features))
         output.append('')
     return '\n'.join(output)
