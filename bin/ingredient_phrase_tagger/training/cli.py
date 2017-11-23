@@ -1,6 +1,7 @@
-import re
 import decimal
 import optparse
+import re
+
 import pandas as pd
 
 import utils

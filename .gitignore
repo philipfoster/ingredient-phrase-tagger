@@ -8,3 +8,4 @@ ingredient_phrase_tagger.egg-info/*
 *.iml
 input.txt
 result.txt
+tmp_backup/*

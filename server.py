@@ -1,16 +1,15 @@
 from __future__ import print_function
 
 import json
-import tempfile
-
 import os
+import tempfile
 import uuid
 
 from flask import Flask
 from flask import Response
 from flask import request
 
-from ingredient_phrase_tagger.training import utils
+from bin.ingredient_phrase_tagger.training import utils
 
 app = Flask(__name__)
 modelFilename = os.path.join(os.path.dirname(__file__), "./tmp/model_file")

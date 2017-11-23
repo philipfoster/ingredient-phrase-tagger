@@ -224,6 +224,7 @@ def import_data(lines):
             # Confidence score may not be present if output was generated without the 'crf_test -v' command
             # check if confidence score is present before assigning 'tag'
 
+            tag = None
             label_ = re.split(r'/', columns[-1], 1)
             if len(label_) > 1:
                 tag = label_[0]

@@ -1,5 +1,6 @@
 #!/bin/sh
-COUNT_TRAIN=150000
+#COUNT_TRAIN=150000
+COUNT_TRAIN=3000
 COUNT_TEST=2000
 
 echo "generating training data..."
