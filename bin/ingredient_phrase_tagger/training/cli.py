@@ -4,7 +4,7 @@ import re
 
 import pandas as pd
 
-import utils
+from bin.ingredient_phrase_tagger.training import utils
 
 
 # noinspection PyMethodMayBeStatic
@@ -93,7 +93,7 @@ class Cli(object):
         decimal_token = self.parse_numbers(token)
 
         for key, val in ingredientRow.iteritems():
-            if isinstance(val, basestring):
+            if isinstance(val, str):
 
                 for n, vt in enumerate(utils.tokenize(val)):
                     if utils.normalize_token(vt) == token:

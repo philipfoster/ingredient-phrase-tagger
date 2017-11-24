@@ -1,0 +1,6 @@
+The original source and documentation for CRF++-0.58/ is available at https://taku910.github.io/crfpp/
+It is owned by taku@chasen.org, and distributed under the GNU LGPL (https://www.gnu.org/copyleft/lesser.html) or the
+new BSD license (https://opensource.org/licenses/bsd-license.php).
+
+Unfortunately, the files are hosted on google drive, which does not play nicely with common tools like wget or curl.
+To simplify the docker setup process, a copy is distributed with this project.

@@ -66,3 +66,7 @@ def validate_input(input):
         return False, resp
 
     return True, None
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')

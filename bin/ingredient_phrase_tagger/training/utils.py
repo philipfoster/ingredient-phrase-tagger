@@ -232,7 +232,7 @@ def import_data(lines):
             elif len(label_) == 1:
                 tag = label_[0]
             else:
-                print "Unknown class label - missing"
+                print("Unknown class label - missing")
             tag = re.sub('^[BI]\-', "", tag).lower()
 
             # end update
